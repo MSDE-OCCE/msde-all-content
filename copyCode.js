@@ -22,7 +22,13 @@ function copyCode(name) {
       alert('Code copied to clipboard!');
 	  },
       error: function(error) {
-        alert("Code not copied! Error: " + error);
+        var errorMessage;
+        if (error && error.responseJSON && error.responseJSON.message) {
+          errorMessage = error.responseJSON.message;
+        } else {
+          errorMessage = "An error occurred while fetching the code.";
+        }
+        alert("Code not copied! Error: " + errorMessage);
       }
   });
 }
