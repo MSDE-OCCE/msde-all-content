@@ -1,0 +1,12 @@
+.callout-background {
+  background-color: #f7f7f7 !important;
+}
+
+.callout-text-primary {
+  color: #bd0934 !important;
+  padding-bottom: 1em;
+}
+
+.callout-text-secondary {
+  color: #444 !important;
+}
