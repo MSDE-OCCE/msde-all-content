@@ -91,6 +91,10 @@ A layout for presenting a block of information with a header, description, and a
 A snippet for an introductory paragraph, typically used at the beginning of a section or page.
 - [Introduction Paragraph](intro-paragraph.html)
 
+### Table (Accessible and Responsive)
+An example of an accessible and responsive table using Bootstrap 5, including a header, body, and footer. The first column in the body rows is defined as `<th>` to improve accessibility.
+- [Accessible Responsive Table](table.html)
+
 ## How to Use
 1. Navigate to [All Content](https://marylandpublicschools.org/Pages/all-content.aspx).
 2. Click the copy button below the example to copy the code snippet.
