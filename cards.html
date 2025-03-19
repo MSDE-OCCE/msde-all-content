@@ -1,20 +1,20 @@
-<!-- Generic Card Template with Image -->
+<!-- Generic Card Template Snippet -->
 <div class="row row-cols-1 row-cols-md-3 g-5 justify-content-center">
    <!-- Begin Card Item -->
-   <div class="col">
-      <div class="card h-100 text-center border-0" style="box-shadow: #eeeeee 5px 5px 5px;">
-         <!-- Full-size image link wrapper -->
-         <a href="{FULL_IMAGE_LINK}">
-            <!-- Card image with optional inline style (e.g., align-self: center) -->
-            <img src="{IMAGE_SRC}" class="card-img-top" alt="{IMAGE_ALT_TEXT}" {OPTIONAL_IMAGE_STYLE}>
-         </a>
+   <div class="col d-flex flex-column">
+      <div class="card h-100 text-center border-0 flex-grow-1" style="box-shadow: #eeeeee 5px 5px 5px;">
          <div class="card-body">
-            <!-- Card title: can include multiple parts separated by <br/> if needed -->
-            <p class="h5 card-title heading-color-primary">{CARD_TITLE}<br/>{CARD_SUBTITLE}</p>
-            <p class="card-text">
-               <!-- Learn More link -->
-               <a href="{BIO_LINK}" aria-label="{LINK_ARIA_LABEL}" style="text-decoration: underline;">{LINK_TEXT}</a>
+            <!-- Icon: Replace with your icon classes and desired color -->
+            <i class="{ICON_CLASS} py-4" style="color: #bd0934;"></i>
+            <!-- Update the card title -->
+            <p class="h5 card-title header-color">{CARD_TITLE}</p>
+            <p class="card-text"> 
+               <!-- More text if needed -->
             </p>
+         </div>
+         <div class="card-footer text-center card-footer-emulation">
+            <!-- Update link URL, aria-label, and link text as necessary -->
+            <a href="{LINK_URL}" aria-label="{LINK_ARIA_LABEL}" style="text-decoration: underline;">{LINK_TEXT}</a>
          </div>
       </div>
    </div>
