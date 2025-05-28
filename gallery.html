@@ -1,0 +1,211 @@
+<div class="gallery" id="gallery">
+   <div class="gallery-item">
+      <div class="content">
+         <img src="image.jpg" title="Popup on mouse hover" alt="Description of image" width="0" height="0"/> 
+      </div>
+   </div>
+</div>
+
+<!-- Only when needed -->
+<!-- link rel="stylesheet" type="text/css" href="/Style%20Library/egov/css/gallery.css" /-->
+
+<!-- Paste the below in a code snippet -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the gallery container and all gallery items
+    var gallery = document.querySelector('#gallery');
+    if (!gallery) return; // Ensure the gallery element exists before proceeding
+    
+    var galleryItems = gallery.querySelectorAll('.gallery-item');
+    
+    // Create a hidden live region for screen reader announcements
+    var liveRegion = document.createElement('div');
+    liveRegion.setAttribute('aria-live', 'assertive');
+    liveRegion.setAttribute('role', 'status');
+    liveRegion.style.position = 'absolute'; // Ensure the live region is invisible
+    liveRegion.style.width = '1px';
+    liveRegion.style.height = '1px';
+    liveRegion.style.overflow = 'hidden';
+    liveRegion.style.clip = 'rect(1px, 1px, 1px, 1px)';
+    document.body.appendChild(liveRegion); // Append the live region to the document body
+
+    // Helper function to get computed style values
+    var getVal = function (elem, style) {
+        return parseInt(window.getComputedStyle(elem).getPropertyValue(style));
+    };
+
+    // Helper function to get the height of a gallery item
+    var getHeight = function (item) {
+        var content = item.querySelector('.content');
+        if (content) {
+            return content.getBoundingClientRect().height;
+        }
+        return 0;
+    };
+
+    // Adjust the size of gallery items dynamically based on content
+    var resizeAll = function () {
+        var altura = getVal(gallery, 'grid-auto-rows');
+        var gap = getVal(gallery, 'grid-row-gap');
+        galleryItems.forEach(function (item) {
+            var el = item;
+            var height = getHeight(item);
+            el.style.gridRowEnd = "span " + Math.ceil((height + gap) / (altura + gap));
+        });
+    };
+
+    // Function to check if any gallery item is in full view (i.e., contains the 'full' class)
+    function isAnyGalleryItemFull() {
+        return Array.from(galleryItems).some(function(item) {
+            return item.classList.contains('full');
+        });
+    }
+
+    // Function to catch Tab and Shift+Tab keys and ignore them if an image is in full view
+    function catchTabKey(event) {
+        if (isAnyGalleryItemFull()) {
+            if (event.key === 'Tab' || event.keyCode === 9) {
+                event.preventDefault(); // Prevent default tabbing behavior
+            }
+        }
+    }
+
+    // Handle adjusting layout for each image once loaded
+    gallery.querySelectorAll('img').forEach(function (item) {
+        item.classList.add('byebye'); // Add class to initially hide images until loaded
+
+        // Adjust layout based on image size
+        function adjustLayout(item) {
+            var altura = getVal(gallery, 'grid-auto-rows');
+            var gap = getVal(gallery, 'grid-row-gap');
+            var gitem = item.parentElement.parentElement; // Get the gallery item (grandparent)
+            if (gitem) {
+                gitem.style.gridRowEnd = "span " + Math.ceil((getHeight(gitem) + gap) / (altura + gap));
+            }
+            item.classList.remove('byebye'); // Remove class once image is loaded
+        }
+
+        // If image is already loaded, adjust layout immediately
+        if (item.complete) {
+            adjustLayout(item);
+        } else {
+            // Adjust layout after image is fully loaded
+            item.addEventListener('load', function () {
+                adjustLayout(item);
+            });
+        }
+    });
+    
+    // Handle resizing window and adjusting layout dynamically
+    window.addEventListener('resize', resizeAll);
+
+    // Toggle image between full view and normal view
+    galleryItems.forEach(function (item) {
+        // Make each gallery item focusable and name it for screen‑readers
+        item.setAttribute('tabindex', '0');
+        item.setAttribute('role', 'button');                          // mark it as interactive
+        var img = item.querySelector('img');
+        if (img && img.getAttribute('title')) {
+          item.setAttribute('title', img.getAttribute('title'));      // tooltip on hover
+          // for an actual accessible name, you might also do:
+          // item.setAttribute('aria-label', img.getAttribute('title'));
+        }
+
+        // Function to toggle the full view of an image
+        function toggleImage() {
+            var img = item.querySelector('img');
+            if (!img) return; // Ensure image exists
+
+            var titleText = img.getAttribute('title') || "Image"; // Fallback title if none exists
+
+            // If the image is already in full view, close it
+            if (item.classList.contains('full')) {
+                img.style.transform = 'translate(-50%, -50%) scale(0.5)';
+                setTimeout(function() {
+                    // First remove the 'full' class so layout resets
+                    item.classList.remove('full');
+
+                    // Then clear the transform after another frame to avoid layout thrash
+                    requestAnimationFrame(() => {
+                        img.style.transform = '';
+                    });
+                }, 500);
+
+                var caption = item.querySelector('figcaption');
+                if (caption) {
+                    caption.remove(); // Remove caption when closing
+                }
+
+                item.removeAttribute('aria-label');
+
+                // Remove keydown listener for Tab key when image is closed
+                document.removeEventListener('keydown', catchTabKey);
+                item.focus(); // Return focus to the gallery item
+
+                // Announce that the image has been closed
+                liveRegion.textContent = "Image closed. Focus returned.";
+
+            } else {
+                // If not in full view, set image to full view
+                img.style.transform = 'translate(-50%, -50%) scale(1)';
+
+                // Create and append caption for the image
+                var figCaption = document.createElement('figcaption');
+                figCaption.textContent = titleText;
+                figCaption.style.textAlign = 'center';
+                item.querySelector('.content').appendChild(figCaption);
+
+                // Set aria-label for accessibility
+                item.setAttribute('aria-label', titleText + '. Press Escape to close.');
+
+                // Add keydown listener to catch Tab key
+                document.addEventListener('keydown', catchTabKey);
+                item.focus(); // Move focus to the full view image
+
+                // Announce that the image is now in full view
+                liveRegion.textContent = "Image now in full view. Press Escape to close.";
+            }
+
+            // Toggle the 'full' class on the gallery item
+            item.classList.toggle('full');
+        }
+
+        // Handle image click to toggle full view
+        item.addEventListener('click', toggleImage);
+
+        // Handle Enter key to toggle full view
+        item.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                toggleImage();
+            }
+        });
+    });
+
+    // Handle closing the full view image with the Escape key
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            var fullItem = document.querySelector('.gallery-item.full');
+            if (fullItem) {
+                var img = fullItem.querySelector('img');
+                if (!img) return; // Ensure image exists
+
+                img.style.transform = 'translate(-50%, -50%) scale(0.5)';
+                setTimeout(function() {
+                    img.style.transform = '';
+                }, 500);
+
+                var caption = fullItem.querySelector('figcaption');
+                if (caption) {
+                    caption.remove(); // Remove caption when closing
+                }
+
+                fullItem.classList.remove('full');
+                document.removeEventListener('keydown', catchTabKey);
+
+                // Announce that the image has been closed
+                liveRegion.textContent = "Image closed. Focus returned.";
+            }
+        }
+    });
+});
+</script>
