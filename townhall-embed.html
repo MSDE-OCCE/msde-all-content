@@ -1,14 +1,13 @@
 <!-- Place where you want the embedded video to show -->
-<!-- Use class="yt-shorts-wrapper" for YouTube Shorts videos -->
-<div id="YouTubeVideo" class="ratio ratio-16x9 text-center"></div>
+<div id="TownHallVideo" class="ratio ratio-16x9 text-center"></div>
 
 <!-- Insert as embed code at the end -->
 <script type="text/javascript">
-    var container = document.getElementById('YouTubeVideo');
+    var container = document.getElementById('TownHallVideo');
     if (container) {
         var iframe = document.createElement('iframe');
-        iframe.src = "https://www.youtube-nocookie.com/embed/AAAAAAAAAAAAAAAAAAAAAAA";
-        iframe.title = "YouTube video player";
+        iframe.src = "https://townhallstreams.com/stream.php?location_id=96&id=#####";
+        iframe.title = "Town Hall video player";
         iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
         iframe.setAttribute('allowfullscreen','');
         iframe.style.border = "0";
